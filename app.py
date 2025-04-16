@@ -4,10 +4,8 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# Localização armazenada em memória (simples)
+# Localização armazenada em memória
 localizacao = {"latitude": None, "longitude": None, "timestamp": None}
-
-# Variável de controle para o comando
 comando_pendente = {"executar": False}
 
 @app.route("/enviar", methods=["POST"])
@@ -22,15 +20,13 @@ def receber_localizacao():
 def enviar_localizacao():
     return jsonify(localizacao)
 
-@app.route('/comando', methods=['GET', 'POST'])
+@app.route("/comando", methods=["GET", "POST"])
 def comando():
     global comando_pendente
     if request.method == 'POST':
-        # Ao receber um POST, o comando será ativado
         comando_pendente["executar"] = True
         return jsonify({"status": "comando recebido"})
     elif request.method == 'GET':
-        # Verifica se há um comando para executar
         if comando_pendente["executar"]:
             comando_pendente["executar"] = False
             return jsonify({"executar": True})
