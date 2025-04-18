@@ -4,11 +4,9 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# Armazena a última localização recebida
+# Localização armazenada em memória (simples)
 localizacao = {"latitude": None, "longitude": None, "timestamp": None}
-
-# Armazena o último comando enviado pelo controlador
-comando = {"comando": None}
+comando_recebido = {"comando": None}
 
 @app.route("/enviar", methods=["POST"])
 def receber_localizacao():
@@ -22,15 +20,14 @@ def receber_localizacao():
 def enviar_localizacao():
     return jsonify(localizacao)
 
+# NOVO: Enviar comando (do controlador)
 @app.route("/comando", methods=["POST"])
-def receber_comando():
+def definir_comando():
     data = request.get_json()
-    comando["comando"] = data.get("comando")
+    comando_recebido["comando"] = data.get("comando")
     return jsonify({"status": "ok", "mensagem": "Comando recebido com sucesso!"})
 
+# NOVO: Verificar comando (monitorado)
 @app.route("/comando", methods=["GET"])
-def enviar_comando():
-    return jsonify(comando)
-
-if __name__ == "__main__":
-    app.run()
+def obter_comando():
+    return jsonify({"comando": comando_recebido["comando"]})
