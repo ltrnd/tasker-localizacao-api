@@ -4,9 +4,8 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# Localização armazenada em memória
 localizacao = {"latitude": None, "longitude": None, "timestamp": None}
-comando_pendente = {"executar": False}
+comando = {"acao": None}  # Novo: comando enviado
 
 @app.route("/enviar", methods=["POST"])
 def receber_localizacao():
@@ -16,22 +15,19 @@ def receber_localizacao():
     localizacao["timestamp"] = data.get("timestamp")
     return jsonify({"status": "ok", "mensagem": "Localização recebida com sucesso!"})
 
+@app.route("/comando", methods=["GET"])
+def obter_comando():
+    return jsonify(comando)
+
+@app.route("/comando", methods=["POST"])
+def definir_comando():
+    data = request.get_json()
+    comando["acao"] = data.get("acao")
+    return jsonify({"status": "ok", "mensagem": f"Comando '{comando['acao']}' recebido"})
+
 @app.route("/localizacao", methods=["GET"])
 def enviar_localizacao():
     return jsonify(localizacao)
-
-@app.route("/comando", methods=["GET", "POST"])
-def comando():
-    global comando_pendente
-    if request.method == 'POST':
-        comando_pendente["executar"] = True
-        return jsonify({"status": "comando recebido"})
-    elif request.method == 'GET':
-        if comando_pendente["executar"]:
-            comando_pendente["executar"] = False
-            return jsonify({"executar": True})
-        else:
-            return jsonify({"executar": False})
 
 if __name__ == "__main__":
     app.run()
