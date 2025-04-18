@@ -16,6 +16,7 @@ def receber_localizacao():
     localizacao["latitude"] = data.get("latitude")
     localizacao["longitude"] = data.get("longitude")
     localizacao["timestamp"] = data.get("timestamp")
+    localizacao["accuracy"] = data.get("accuracy")
     return jsonify({"status": "ok", "mensagem": "Localização recebida com sucesso!"})
 
 @app.route("/localizacao", methods=["GET"])
