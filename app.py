@@ -4,8 +4,11 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+# Armazena a última localização recebida
 localizacao = {"latitude": None, "longitude": None, "timestamp": None}
-comando = {"acao": None}  # Novo: comando enviado
+
+# Armazena o último comando enviado pelo controlador
+comando = {"comando": None}
 
 @app.route("/enviar", methods=["POST"])
 def receber_localizacao():
@@ -15,19 +18,19 @@ def receber_localizacao():
     localizacao["timestamp"] = data.get("timestamp")
     return jsonify({"status": "ok", "mensagem": "Localização recebida com sucesso!"})
 
-@app.route("/comando", methods=["GET"])
-def obter_comando():
-    return jsonify(comando)
-
-@app.route("/comando", methods=["POST"])
-def definir_comando():
-    data = request.get_json()
-    comando["acao"] = data.get("acao")
-    return jsonify({"status": "ok", "mensagem": f"Comando '{comando['acao']}' recebido"})
-
 @app.route("/localizacao", methods=["GET"])
 def enviar_localizacao():
     return jsonify(localizacao)
+
+@app.route("/comando", methods=["POST"])
+def receber_comando():
+    data = request.get_json()
+    comando["comando"] = data.get("comando")
+    return jsonify({"status": "ok", "mensagem": "Comando recebido com sucesso!"})
+
+@app.route("/comando", methods=["GET"])
+def enviar_comando():
+    return jsonify(comando)
 
 if __name__ == "__main__":
     app.run()
