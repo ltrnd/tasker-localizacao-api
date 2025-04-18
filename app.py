@@ -31,6 +31,8 @@ def gerenciar_comando():
         return jsonify({"status": "ok", "mensagem": "Comando recebido com sucesso!"})
     elif request.method == "GET":
         return jsonify(comando)
+        comando = {"comando": None}  # limpa o comando após entregar
+        return resposta
 
 if __name__ == "__main__":
     app.run()
